@@ -6,7 +6,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.android.recyclerview.R;
+import com.example.interview.R;
 import com.example.interview.api.CourseDetailClient;
 import com.example.interview.api.OnFetchCompleteListener;
 import com.example.interview.constant.Constant;
@@ -23,11 +23,16 @@ public class DetailActivity extends Activity implements OnFetchCompleteListener<
     super.onCreate(savedInstanceState);
     setContentView(R.layout.search_detail_layout);
 
+    if (getIntent().getExtras() == null ||
+        getIntent().getExtras().getString(Constant.sType) == null) {
+      finish();
+    }
+
+    Type type =
+        Type.valueOf(getIntent().getExtras().getString(Constant.sType));
     String id = getIntent().getExtras().getString(Constant.sId);
     String photoUrl = getIntent().getExtras().getString(Constant.sPhotoUrl);
     String name = getIntent().getExtras().getString(Constant.sName);
-    Type type =
-        Type.valueOf(getIntent().getExtras().getString(Constant.sType));
 
     ImageView imageView = (ImageView) findViewById(R.id.image);
     Picasso.with(this).load(photoUrl).fit().centerInside().into(imageView);

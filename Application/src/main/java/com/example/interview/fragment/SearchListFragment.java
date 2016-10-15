@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.android.recyclerview.R;
+import com.example.interview.R;
 import com.example.interview.activity.DetailActivity;
 import com.example.interview.adapter.SearchListAdapter;
 import com.example.interview.adapter.OnItemResponseListener;
@@ -32,20 +32,20 @@ public class SearchListFragment extends Fragment
   private static final String TAG = "SearchListFragment";
 
   private SearchListAdapter mAdapter;
+  private Button mSearchButton;
   private EditText mSearchTextField;
+  private RecyclerView mRecyclerView;
   private LinearLayoutManager mLayoutManager;
   private SearchClient mSearchClient;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
+    // Make sure content are retained after screen rotation
     setRetainInstance(true);
 
-    if (savedInstanceState == null) {
-      mSearchClient = new SearchClient(this);
-      mAdapter = new SearchListAdapter(this);
-    }
+    mSearchClient = new SearchClient(this);
+    mAdapter = new SearchListAdapter(this);
   }
 
   @Override
@@ -53,18 +53,24 @@ public class SearchListFragment extends Fragment
       LayoutInflater inflater, 
       ViewGroup container,
       Bundle savedInstanceState) {
-    
-    View rootView = inflater.inflate(R.layout.recycler_view_frag, container, false);
-    rootView.setTag(TAG);
+    return inflater.inflate(R.layout.recycler_view_frag, container, false);
+  }
 
-    mSearchTextField = (EditText) rootView.findViewById(R.id.search_text_field);
+  @Override
+  public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+
+    mSearchTextField = (EditText) view.findViewById(R.id.search_text_field);
+
+    mSearchButton = (Button) view.findViewById(R.id.search_action_button);
+    mSearchButton.setOnClickListener(this);
 
     mLayoutManager = new LinearLayoutManager(getActivity());
 
-    RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
-    recyclerView.setLayoutManager(mLayoutManager);
-    recyclerView.setAdapter(mAdapter);
-    recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+    mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+    mRecyclerView.setLayoutManager(mLayoutManager);
+    mRecyclerView.setAdapter(mAdapter);
+    mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
       @Override
       public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -81,11 +87,18 @@ public class SearchListFragment extends Fragment
         }
       }
     });
+  }
 
-    Button searchButton = (Button) rootView.findViewById(R.id.search_action_button);
-    searchButton.setOnClickListener(this);
-
-    return rootView;
+  /**
+   * Dereference all instances which hold the reference to the activity to avoid memory leak
+   */
+  @Override
+  public void onDestroyView() {
+    mLayoutManager = null;
+    mRecyclerView = null;
+    mSearchButton = null;
+    mSearchTextField = null;
+    super.onDestroyView();
   }
 
   @Override

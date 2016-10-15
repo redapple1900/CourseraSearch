@@ -1,5 +1,7 @@
 package com.example.interview.api;
 
+import static com.example.interview.constant.Constant.sBaseUrl;
+
 import com.example.interview.model.SearchResult;
 import com.example.interview.model.elements.PageInfo;
 import com.example.interview.item.util.SearchItemModelUtils;
@@ -17,11 +19,9 @@ import retrofit2.http.QueryMap;
 
 public class SearchClient implements Callback<SearchResult> {
 
-  private static final String sBaseUrl = "https://api.coursera.org/";
-
   private OnFetchCompleteListener<SearchResult> mOnFetchCompleteListener;
 
-  private CourseraSearchService mSearchService;
+  private CourseSearchService mSearchService;
   private Map<String, String> mQueryMap;
 
   private String mCurrentKey;
@@ -34,11 +34,13 @@ public class SearchClient implements Callback<SearchResult> {
         .baseUrl(sBaseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-        .create(CourseraSearchService.class);
+        .create(CourseSearchService.class);
 
     mQueryMap = new HashMap<>();
     mQueryMap.put("includes", "courseId,onDemandSpecializationId,courses.v1(partnerIds)");
-    mQueryMap.put("fields", "courseId,onDemandSpecializationId,courses.v1(name,photoUrl,partnerIds),onDemandSpecializations.v1(name,logo,courseIds,partnerIds),partners.v1(name)");
+    mQueryMap.put("fields", "courseId,onDemandSpecializationId," +
+        "courses.v1(name,photoUrl,partnerIds),onDemandSpecializations.v1" +
+        "(name,logo,courseIds,partnerIds),partners.v1(name)");
     mQueryMap.put("limit", "10");
     mQueryMap.put("q", "search");
 
@@ -57,7 +59,7 @@ public class SearchClient implements Callback<SearchResult> {
   }
 
   public void loadMore() {
-    if (mPageInfo.getNext() >= mPageInfo.getTotal()) return;
+    if (mPageInfo.getNext() != 0 && mPageInfo.getNext() >= mPageInfo.getTotal()) return;
 
     mQueryMap.put("start", String.valueOf(mPageInfo.getNext()));
     mSearchService.getResponse(mQueryMap).enqueue(this);
@@ -78,7 +80,7 @@ public class SearchClient implements Callback<SearchResult> {
     mOnFetchCompleteListener.onFailure(t);
   }
 
-  interface CourseraSearchService {
+  interface CourseSearchService {
 
     @GET("api/catalogResults.v2")
     Call<SearchResult> getResponse(@QueryMap Map<String, String> map);

@@ -1,5 +1,6 @@
 package com.example.interview.api;
 
+import static com.example.interview.constant.Constant.sBaseUrl;
 
 import com.example.interview.model.DetailResult;
 import com.example.interview.model.elements.DetailElement;
@@ -15,7 +16,6 @@ import retrofit2.http.Query;
 
 public class CourseDetailClient implements Callback<DetailResult> {
 
-  private static final String sBaseUrl = "https://api.coursera.org/";
   private static final String sCourseFields = "photoUrl,description";
   private static final String sSpecializationFields = "logo,description";
 
@@ -55,7 +55,7 @@ public class CourseDetailClient implements Callback<DetailResult> {
 
   @Override
   public void onFailure(Call<DetailResult> call, Throwable t) {
-
+    mOnFetchCompleteListener.onFailure(t);
   }
 
   interface CourseDetailService {

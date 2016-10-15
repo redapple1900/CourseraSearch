@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.example.android.recyclerview"
+          package="com.example.interview"
           android:versionCode="1"
           android:versionName="1.0">
 
@@ -14,8 +14,8 @@
       android:theme="@style/AppTheme">
 
     <activity
-        android:name="com.example.interview.activity.MainActivity"
-        android:label="@string/course_detail">
+        android:name="com.example.interview.activity.SearchActivity"
+        android:label="@string/search">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
@@ -23,11 +23,7 @@
     </activity>
     <activity
         android:name="com.example.interview.activity.DetailActivity"
-        android:label="@string/search">
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-      </intent-filter>
+        android:label="@string/course_detail">
     </activity>
   </application>
 </manifest>

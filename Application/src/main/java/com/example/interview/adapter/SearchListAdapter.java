@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.android.recyclerview.R;
+import com.example.interview.R;
 import com.example.interview.item.SearchItemModel;
 import com.example.interview.item.SearchItemModel.Type;
 import com.squareup.picasso.Picasso;
@@ -24,17 +24,18 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
   private OnItemResponseListener mOnItemResponseListener;
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
+
+    private final ImageView imageView;
     private final TextView nameView;
     private final TextView univNameView;
     private final TextView courseAmountView;
-    private final ImageView imageView;
 
     public ViewHolder(View v) {
       super(v);
+      imageView = (ImageView) v.findViewById(R.id.image);
       nameView = (TextView) v.findViewById(R.id.name);
       univNameView = (TextView) v.findViewById(R.id.university_name);
       courseAmountView = (TextView) v.findViewById(R.id.course_amount);
-      imageView = (ImageView) v.findViewById(R.id.image);
     }
   }
 
@@ -43,6 +44,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
     mOnItemResponseListener = listener;
   }
 
+  // The content of this list might be modified
   public List<SearchItemModel> getData() {
     return mDataSet;
   }
@@ -100,7 +102,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
     for (int i = 0, j = list.size() - 1; i < j; i++) {
       builder.append(list.get(i).trim()).append("\n");
     }
-
     builder.append(list.get(list.size() - 1).trim());
     return builder.toString();
   }

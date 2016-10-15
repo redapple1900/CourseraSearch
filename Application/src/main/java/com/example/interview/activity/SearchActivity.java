@@ -4,10 +4,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
-import com.example.android.recyclerview.R;
+import com.example.interview.R;
 import com.example.interview.fragment.SearchListFragment;
 
-public class MainActivity extends FragmentActivity {
+public class SearchActivity extends FragmentActivity {
 
   private static final String sTag = SearchListFragment.class.getSimpleName();
 

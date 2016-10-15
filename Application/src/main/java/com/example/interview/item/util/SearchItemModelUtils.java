@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A utility class to generate 'view-model' from raw data.
+ */
 public class SearchItemModelUtils {
 
   public static void updatePageInfo(SearchResult result, PageInfo pageInfo) {
