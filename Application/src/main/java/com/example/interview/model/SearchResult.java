@@ -2,16 +2,16 @@ package com.example.interview.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import com.example.interview.model.elements.Element;
+import com.example.interview.model.elements.SearchElement;
 import com.example.interview.model.elements.LinkedResource;
 import com.example.interview.model.elements.PageInfo;
 
 import java.util.List;
 
-public class CourseSearchResponse {
+public class SearchResult {
 
   @SerializedName("elements")
-  private List<Element> mElement;
+  private List<SearchElement> mSearchElement;
 
   @SerializedName("paging")
   private PageInfo mPageInfo;
@@ -23,17 +23,17 @@ public class CourseSearchResponse {
     return mLinkedResource;
   }
 
-  public CourseSearchResponse setLinkedResource(LinkedResource linkedResource) {
+  public SearchResult setLinkedResource(LinkedResource linkedResource) {
     mLinkedResource = linkedResource;
     return this;
   }
 
-  public List<Element> getElement() {
-    return mElement;
+  public List<SearchElement> getSearchElement() {
+    return mSearchElement;
   }
 
-  public CourseSearchResponse setElement(List<Element> element) {
-    mElement = element;
+  public SearchResult setSearchElement(List<SearchElement> searchElement) {
+    mSearchElement = searchElement;
     return this;
   }
 
@@ -41,7 +41,7 @@ public class CourseSearchResponse {
     return mPageInfo;
   }
 
-  public CourseSearchResponse setPageInfo(PageInfo pageInfo) {
+  public SearchResult setPageInfo(PageInfo pageInfo) {
     mPageInfo = pageInfo;
     return this;
   }

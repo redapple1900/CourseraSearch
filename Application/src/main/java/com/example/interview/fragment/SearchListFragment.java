@@ -1,4 +1,4 @@
-package com.example.interview.view;
+package com.example.interview.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,22 +13,28 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.android.recyclerview.R;
-import com.example.interview.data.OnFetchCompleteListener;
-import com.example.interview.data.SearchClient;
-import com.example.interview.viewmodel.SearchItemModel;
+import com.example.interview.activity.DetailActivity;
+import com.example.interview.adapter.SearchListAdapter;
+import com.example.interview.adapter.OnItemResponseListener;
+import com.example.interview.api.OnFetchCompleteListener;
+import com.example.interview.api.SearchClient;
+import com.example.interview.constant.Constant;
+import com.example.interview.model.SearchResult;
+import com.example.interview.item.SearchItemModel;
+import com.example.interview.item.util.SearchItemModelUtils;
 
-public class SearchListFragment extends Fragment implements
-    OnFetchCompleteListener,
+public class SearchListFragment extends Fragment
+    implements
+    OnFetchCompleteListener<SearchResult>,
     OnItemResponseListener,
     View.OnClickListener {
 
   private static final String TAG = "SearchListFragment";
 
+  private SearchListAdapter mAdapter;
   private EditText mSearchTextField;
   private LinearLayoutManager mLayoutManager;
-  
   private SearchClient mSearchClient;
-  private CustomAdapter mAdapter;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -38,7 +44,7 @@ public class SearchListFragment extends Fragment implements
 
     if (savedInstanceState == null) {
       mSearchClient = new SearchClient(this);
-      mAdapter = new CustomAdapter(mSearchClient.getData(), this);
+      mAdapter = new SearchListAdapter(this);
     }
   }
 
@@ -85,13 +91,15 @@ public class SearchListFragment extends Fragment implements
   @Override
   public void onClick(View v) {
     String key = mSearchTextField.getText().toString().trim();
-    if (!key.isEmpty()) {
+    if (!key.isEmpty() && !mSearchClient.isCurrentKey(key)) {
+      mAdapter.getData().clear();
       mSearchClient.search(key);
     }
   }
 
   @Override
-  public void onSuccess() {
+  public void onSuccess(SearchResult response) {
+    SearchItemModelUtils.updateDataSet(response, mAdapter.getData());
     mAdapter.notifyDataSetChanged();
   }
 
@@ -103,12 +111,13 @@ public class SearchListFragment extends Fragment implements
   @Override
   public void onResponse(View view, int adapterPosition) {
 
-    SearchItemModel model = mSearchClient.getData().get(adapterPosition);
+    SearchItemModel model = mAdapter.getData().get(adapterPosition);
 
     Bundle bundle = new Bundle();
-    bundle.putString("PhotoUrl", model.getPhotoUrl());
-    bundle.putString("name", model.getName());
-    bundle.putString("id", model.getId());
+    bundle.putString(Constant.sPhotoUrl, model.getPhotoUrl());
+    bundle.putString(Constant.sName, model.getName());
+    bundle.putString(Constant.sId, model.getId());
+    bundle.putString(Constant.sType, model.getType().name());
 
     Intent intent = new Intent();
     intent.putExtras(bundle);

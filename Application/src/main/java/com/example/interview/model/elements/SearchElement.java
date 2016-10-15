@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Element {
+public class SearchElement {
 
   @SerializedName("id")
   private String mId;
@@ -16,7 +16,7 @@ public class Element {
     return mId;
   }
 
-  public Element setId(String id) {
+  public SearchElement setId(String id) {
     mId = id;
     return this;
   }
@@ -25,7 +25,7 @@ public class Element {
     return mEntryList;
   }
 
-  public Element setEntryList(List<Entry> entryList) {
+  public SearchElement setEntryList(List<Entry> entryList) {
     mEntryList = entryList;
     return this;
   }

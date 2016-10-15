@@ -14,16 +14,20 @@
       android:theme="@style/AppTheme">
 
     <activity
-        android:name="com.example.interview.view.MainActivity"
-        android:label="@string/search">
+        android:name="com.example.interview.activity.MainActivity"
+        android:label="@string/course_detail">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
     <activity
-        android:name="com.example.interview.view.DetailActivity"
+        android:name="com.example.interview.activity.DetailActivity"
         android:label="@string/search">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
     </activity>
   </application>
 </manifest>

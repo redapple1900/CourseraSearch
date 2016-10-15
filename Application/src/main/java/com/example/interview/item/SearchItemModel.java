@@ -1,4 +1,4 @@
-package com.example.interview.viewmodel;
+package com.example.interview.item;
 
 import java.util.List;
 

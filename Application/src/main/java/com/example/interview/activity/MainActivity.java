@@ -1,10 +1,11 @@
-package com.example.interview.view;
+package com.example.interview.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
 import com.example.android.recyclerview.R;
+import com.example.interview.fragment.SearchListFragment;
 
 public class MainActivity extends FragmentActivity {
 

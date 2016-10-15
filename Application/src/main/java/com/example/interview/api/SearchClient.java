@@ -1,13 +1,10 @@
-package com.example.interview.data;
+package com.example.interview.api;
 
-import com.example.interview.model.CourseSearchResponse;
+import com.example.interview.model.SearchResult;
 import com.example.interview.model.elements.PageInfo;
-import com.example.interview.viewmodel.SearchItemModel;
-import com.example.interview.viewmodel.util.SearchItemModelUtils;
+import com.example.interview.item.util.SearchItemModelUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -18,20 +15,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.QueryMap;
 
-public class SearchClient implements Callback<CourseSearchResponse> {
+public class SearchClient implements Callback<SearchResult> {
 
   private static final String sBaseUrl = "https://api.coursera.org/";
 
-  private OnFetchCompleteListener mOnFetchCompleteListener;
+  private OnFetchCompleteListener<SearchResult> mOnFetchCompleteListener;
 
   private CourseraSearchService mSearchService;
   private Map<String, String> mQueryMap;
 
   private String mCurrentKey;
   private PageInfo mPageInfo;
-  private List<SearchItemModel> mDataSet;
 
-  public SearchClient(OnFetchCompleteListener listener) {
+  public SearchClient(OnFetchCompleteListener<SearchResult> listener) {
     mOnFetchCompleteListener = listener;
 
     mSearchService = new Retrofit.Builder()
@@ -48,44 +44,43 @@ public class SearchClient implements Callback<CourseSearchResponse> {
 
     mCurrentKey = "";
     mPageInfo = new PageInfo();
-    mDataSet = new ArrayList<>();
   }
 
   public void search(String key) {
     if (key == null || key.isEmpty() || key.equals(mCurrentKey)) return;
 
     mCurrentKey = key;
-    mDataSet.clear();
+    mPageInfo.setNext(0);
     mQueryMap.put("query", key);
 
     loadMore();
   }
 
   public void loadMore() {
-    mQueryMap.put("start", String.valueOf(mPageInfo.getNext()));
+    if (mPageInfo.getNext() >= mPageInfo.getTotal()) return;
 
+    mQueryMap.put("start", String.valueOf(mPageInfo.getNext()));
     mSearchService.getResponse(mQueryMap).enqueue(this);
   }
 
-  public List<SearchItemModel> getData() {
-    return mDataSet;
+  public boolean isCurrentKey(String key) {
+    return mCurrentKey.equals(key);
   }
 
   @Override
-  public void onResponse(Call<CourseSearchResponse> call, Response<CourseSearchResponse> response) {
+  public void onResponse(Call<SearchResult> call, Response<SearchResult> response) {
     SearchItemModelUtils.updatePageInfo(response.body(), mPageInfo);
-    SearchItemModelUtils.updateDataSet(response.body(), mDataSet);
-    mOnFetchCompleteListener.onSuccess();
+    mOnFetchCompleteListener.onSuccess(response.body());
   }
 
   @Override
-  public void onFailure(Call<CourseSearchResponse> call, Throwable t) {
+  public void onFailure(Call<SearchResult> call, Throwable t) {
     mOnFetchCompleteListener.onFailure(t);
   }
 
   interface CourseraSearchService {
 
     @GET("api/catalogResults.v2")
-    Call<CourseSearchResponse> getResponse(@QueryMap Map<String, String> map);
+    Call<SearchResult> getResponse(@QueryMap Map<String, String> map);
   }
 }

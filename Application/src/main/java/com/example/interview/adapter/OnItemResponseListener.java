@@ -1,4 +1,4 @@
-package com.example.interview.view;
+package com.example.interview.adapter;
 
 import android.view.View;
 

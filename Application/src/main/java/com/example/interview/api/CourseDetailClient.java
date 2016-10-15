@@ -1,7 +1,8 @@
-package com.example.interview.data;
+package com.example.interview.api;
 
 
-import com.example.interview.model.CourseDetailResponse;
+import com.example.interview.model.DetailResult;
+import com.example.interview.model.elements.DetailElement;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -12,18 +13,18 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public class CourseDetailClient implements Callback<CourseDetailResponse> {
+public class CourseDetailClient implements Callback<DetailResult> {
 
   private static final String sBaseUrl = "https://api.coursera.org/";
   private static final String sCourseFields = "photoUrl,description";
   private static final String sSpecializationFields = "logo,description";
 
-  private OnFetchCompleteListener mOnFetchCompleteListener;
+  private OnFetchCompleteListener<String> mOnFetchCompleteListener;
 
   private CourseDetailService mCourseDetailService;
   private SpecializationDetailService mSpecializationDetailService;
 
-  public CourseDetailClient(OnFetchCompleteListener onFetchCompleteListener) {
+  public CourseDetailClient(OnFetchCompleteListener<String> onFetchCompleteListener) {
     mOnFetchCompleteListener = onFetchCompleteListener;
 
     Retrofit retrofit = new Retrofit.Builder()
@@ -39,20 +40,28 @@ public class CourseDetailClient implements Callback<CourseDetailResponse> {
     mCourseDetailService.getResponse(courseId, sCourseFields).enqueue(this);
   }
 
-  @Override
-  public void onResponse(Call<CourseDetailResponse> call, Response<CourseDetailResponse> response) {
-
+  public void loadSpecialization(String specializationId) {
+    mSpecializationDetailService.getResponse(specializationId, sSpecializationFields).enqueue(this);
   }
 
   @Override
-  public void onFailure(Call<CourseDetailResponse> call, Throwable t) {
+  public void onResponse(Call<DetailResult> call, Response<DetailResult> response) {
+    if (response.body() == null ||
+        response.body().getDetailElementList()  == null ||
+        response.body().getDetailElementList().isEmpty()) return;
+    DetailElement detailElement = response.body().getDetailElementList().get(0);
+    mOnFetchCompleteListener.onSuccess(detailElement.getDescription());
+  }
+
+  @Override
+  public void onFailure(Call<DetailResult> call, Throwable t) {
 
   }
 
   interface CourseDetailService {
 
     @GET("api/courses.v1/{courseId}")
-    Call<CourseDetailResponse> getResponse(
+    Call<DetailResult> getResponse(
         @Path("courseId") String courseId,
         @Query("fields") String fields);
   }
@@ -60,7 +69,7 @@ public class CourseDetailClient implements Callback<CourseDetailResponse> {
   interface SpecializationDetailService {
 
     @GET("api/onDemandSpecializations.v1/{specializationId}")
-    Call<CourseDetailResponse> getResponse(
+    Call<DetailResult> getResponse(
         @Path("specializationId") String specializationId,
         @Query("fields") String fields);
   }

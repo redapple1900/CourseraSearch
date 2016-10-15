@@ -1,4 +1,4 @@
-package com.example.interview.view;
+package com.example.interview.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,15 +8,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.recyclerview.R;
-import com.example.interview.viewmodel.SearchItemModel;
+import com.example.interview.item.SearchItemModel;
+import com.example.interview.item.SearchItemModel.Type;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Provide views to RecyclerView with data from mDataSet.
  */
-public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
+public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.ViewHolder> {
 
   private List<SearchItemModel> mDataSet;
   private OnItemResponseListener mOnItemResponseListener;
@@ -24,19 +26,25 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
   public static class ViewHolder extends RecyclerView.ViewHolder {
     private final TextView nameView;
     private final TextView univNameView;
+    private final TextView courseAmountView;
     private final ImageView imageView;
 
     public ViewHolder(View v) {
       super(v);
       nameView = (TextView) v.findViewById(R.id.name);
       univNameView = (TextView) v.findViewById(R.id.university_name);
+      courseAmountView = (TextView) v.findViewById(R.id.course_amount);
       imageView = (ImageView) v.findViewById(R.id.image);
     }
   }
 
-  public CustomAdapter(List<SearchItemModel> dataSet, OnItemResponseListener listener) {
-    mDataSet = dataSet;
+  public SearchListAdapter(OnItemResponseListener listener) {
+    mDataSet = new ArrayList<>();
     mOnItemResponseListener = listener;
+  }
+
+  public List<SearchItemModel> getData() {
+    return mDataSet;
   }
 
   @Override
@@ -52,11 +60,16 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     SearchItemModel model = mDataSet.get(position);
 
     holder.nameView.setText(model.getName());
-    StringBuilder builder = new StringBuilder();
-    for (String univName : model.getUnivNameList()) {
-      builder.append(univName.trim()).append("\n");
+    holder.univNameView.setText(getUnivName(model.getUnivNameList()));
+
+    if (model.getType() == Type.COURSE) {
+      holder.courseAmountView.setVisibility(View.GONE);
+    } else if (model.getType() == Type.SPECIALIZATION) {
+      holder.courseAmountView.setVisibility(View.VISIBLE);
+      holder.courseAmountView.setText(
+          holder.courseAmountView.getContext().getString(
+              R.string.course_amount, model.getCourseAmount()));
     }
-    holder.univNameView.setText(builder.toString());
 
     Picasso.with(holder.imageView.getContext())
         .load(model.getPhotoUrl())
@@ -75,5 +88,20 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
   @Override
   public int getItemCount() {
     return mDataSet.size();
+  }
+
+  /**
+   * @param list List of University Names
+   * @return A single string with all university names, each university has its own line.
+   */
+  private String getUnivName(List<String> list) {
+    StringBuilder builder = new StringBuilder();
+
+    for (int i = 0, j = list.size() - 1; i < j; i++) {
+      builder.append(list.get(i).trim()).append("\n");
+    }
+
+    builder.append(list.get(list.size() - 1).trim());
+    return builder.toString();
   }
 }

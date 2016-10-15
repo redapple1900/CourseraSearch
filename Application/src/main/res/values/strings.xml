@@ -3,4 +3,7 @@
 <resources>
   <string name="search">Search Course</string>
   <string name="go">Go!</string>
+  <string name="course_amount">%d courses</string>
+  <string name="menu_search">Search Course</string>
+  <string name="course_detail">Course Detail</string>
 </resources>
