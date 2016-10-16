@@ -1,5 +1,7 @@
 package com.example.interview.fragment;
 
+import static com.example.interview.constant.Constant.sBufferSize;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -82,7 +84,7 @@ public class SearchListFragment extends Fragment
         int totalItemCount = mLayoutManager.getItemCount();
         int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
 
-        if (visibleItemCount + pastVisibleItems >= totalItemCount) {
+        if (visibleItemCount + pastVisibleItems + sBufferSize >= totalItemCount) {
           mSearchClient.loadMore();
         }
       }

@@ -22,10 +22,11 @@ public class SearchActivity extends FragmentActivity {
       SearchListFragment fragment;
       if (getSupportFragmentManager().findFragmentByTag(sTag) != null) {
         fragment = (SearchListFragment) getSupportFragmentManager().findFragmentByTag(sTag);
+        transaction.replace(R.id.fragment_container, fragment, sTag).commit();
       } else {
         fragment = new SearchListFragment();
+        transaction.add(R.id.fragment_container, fragment, sTag).commit();
       }
-      transaction.replace(R.id.sample_content_fragment, fragment, sTag).commit();
     }
   }
 }
