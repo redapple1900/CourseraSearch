@@ -37,7 +37,6 @@ public class SearchListFragment extends Fragment
   private Button mSearchButton;
   private EditText mSearchTextField;
   private RecyclerView mRecyclerView;
-  private LinearLayoutManager mLayoutManager;
   private SearchClient mSearchClient;
 
   @Override
@@ -67,10 +66,7 @@ public class SearchListFragment extends Fragment
     mSearchButton = (Button) view.findViewById(R.id.search_action_button);
     mSearchButton.setOnClickListener(this);
 
-    mLayoutManager = new LinearLayoutManager(getActivity());
-
     mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-    mRecyclerView.setLayoutManager(mLayoutManager);
     mRecyclerView.setAdapter(mAdapter);
     mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -79,10 +75,11 @@ public class SearchListFragment extends Fragment
         super.onScrolled(recyclerView, dx, dy);
 
         if (dy <= 0)  return;
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
-        int visibleItemCount = mLayoutManager.getChildCount();
-        int totalItemCount = mLayoutManager.getItemCount();
-        int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
+        int visibleItemCount = layoutManager.getChildCount();
+        int totalItemCount = layoutManager.getItemCount();
+        int pastVisibleItems = layoutManager.findFirstVisibleItemPosition();
 
         if (visibleItemCount + pastVisibleItems + sBufferSize >= totalItemCount) {
           mSearchClient.loadMore();
@@ -96,7 +93,6 @@ public class SearchListFragment extends Fragment
    */
   @Override
   public void onDestroyView() {
-    mLayoutManager = null;
     mRecyclerView = null;
     mSearchButton = null;
     mSearchTextField = null;

@@ -13,15 +13,20 @@ import com.example.interview.constant.Constant;
 import com.example.interview.item.SearchItemModel.Type;
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class DetailActivity extends Activity implements OnFetchCompleteListener<String> {
 
   private CourseDetailClient mCourseDetailClient = new CourseDetailClient(this);
-  private TextView mDescriptionView;
+
+  @BindView(R.id.description) TextView mDescriptionView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.search_detail_layout);
+    ButterKnife.bind(this);
 
     if (getIntent().getExtras() == null ||
         getIntent().getExtras().getString(Constant.sType) == null) {
@@ -40,7 +45,7 @@ public class DetailActivity extends Activity implements OnFetchCompleteListener<
     TextView nameView = (TextView) findViewById(R.id.name);
     nameView.setText(name);
 
-    mDescriptionView = (TextView) findViewById(R.id.description);
+    // mDescriptionView = (TextView) findViewById(R.id.description);
 
     if (type == Type.COURSE) {
       mCourseDetailClient.loadCourse(id);

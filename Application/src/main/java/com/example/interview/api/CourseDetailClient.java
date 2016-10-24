@@ -9,10 +9,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class CourseDetailClient implements Callback<DetailResult> {
 
@@ -30,6 +35,7 @@ public class CourseDetailClient implements Callback<DetailResult> {
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(sBaseUrl)
         .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
         .build();
 
     mCourseDetailService = retrofit.create(CourseDetailService.class);
@@ -37,7 +43,18 @@ public class CourseDetailClient implements Callback<DetailResult> {
   }
 
   public void loadCourse(String courseId) {
-    mCourseDetailService.getResponse(courseId, sCourseFields).enqueue(this);
+//    mCourseDetailService.getResponse(courseId, sCourseFields).enqueue(this);
+    mCourseDetailService.getResponse(courseId, sCourseFields)
+        .subscribeOn(Schedulers.io())
+        .unsubscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<DetailResult>() {
+          @Override
+          public void call(DetailResult detailResult) {
+            mOnFetchCompleteListener.onSuccess(
+                detailResult.getDetailElementList().get(0).getDescription());
+          }
+        });
   }
 
   public void loadSpecialization(String specializationId) {
@@ -61,7 +78,7 @@ public class CourseDetailClient implements Callback<DetailResult> {
   interface CourseDetailService {
 
     @GET("api/courses.v1/{courseId}")
-    Call<DetailResult> getResponse(
+    Observable<DetailResult> getResponse(
         @Path("courseId") String courseId,
         @Query("fields") String fields);
   }
