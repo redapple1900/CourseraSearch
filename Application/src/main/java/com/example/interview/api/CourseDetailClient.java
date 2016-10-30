@@ -51,7 +51,7 @@ public class CourseDetailClient implements Callback<DetailResult> {
         .subscribe(new Action1<DetailResult>() {
           @Override
           public void call(DetailResult detailResult) {
-            mOnFetchCompleteListener.onSuccess(
+            mOnFetchCompleteListener.onResponse(
                 detailResult.getDetailElementList().get(0).getDescription());
           }
         });
@@ -67,7 +67,7 @@ public class CourseDetailClient implements Callback<DetailResult> {
         response.body().getDetailElementList()  == null ||
         response.body().getDetailElementList().isEmpty()) return;
     DetailElement detailElement = response.body().getDetailElementList().get(0);
-    mOnFetchCompleteListener.onSuccess(detailElement.getDescription());
+    mOnFetchCompleteListener.onResponse(detailElement.getDescription());
   }
 
   @Override

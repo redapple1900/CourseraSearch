@@ -2,9 +2,13 @@ package com.example.interview.fragment;
 
 import static com.example.interview.constant.Constant.sBufferSize;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -100,6 +104,13 @@ public class SearchListFragment extends Fragment
   }
 
   @Override
+  public void onDestroy() {
+    mSearchClient.cancel();
+    Log.d(getClass().getSimpleName(), "onDestroy");
+    super.onDestroy();
+  }
+
+  @Override
   public void onClick(View v) {
     String key = mSearchTextField.getText().toString().trim();
     if (!key.isEmpty() && !mSearchClient.isCurrentKey(key)) {
@@ -109,7 +120,7 @@ public class SearchListFragment extends Fragment
   }
 
   @Override
-  public void onSuccess(SearchResult response) {
+  public void onResponse(SearchResult response) {
     SearchItemModelUtils.updateDataSet(response, mAdapter.getData());
     mAdapter.notifyDataSetChanged();
   }
@@ -130,9 +141,27 @@ public class SearchListFragment extends Fragment
     bundle.putString(Constant.sId, model.getId());
     bundle.putString(Constant.sType, model.getType().name());
 
-    Intent intent = new Intent();
+    Intent intent = new Intent(getActivity(), DetailActivity.class);
     intent.putExtras(bundle);
-    intent.setClass(getActivity(), DetailActivity.class);
-    getActivity().startActivity(intent);
+
+    // BEGIN_INCLUDE(start_activity)
+    /**
+     * Now create an {@link android.app.ActivityOptions} instance using the
+     * {@link ActivityOptionsCompat#makeSceneTransitionAnimation(Activity, Pair[])} factory
+     * method.
+     */
+    ActivityOptionsCompat activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(
+        getActivity(),
+
+        // Now we provide a list of Pair items which contain the view we can transitioning
+        // from, and the name of the view it is transitioning to, in the launched activity
+        new Pair<>(view.findViewById(R.id.image),
+            DetailActivity.VIEW_NAME_HEADER_IMAGE),
+        new Pair<>(view.findViewById(R.id.name),
+            DetailActivity.VIEW_NAME_HEADER_TITLE));
+
+    // Now we can start the Activity, providing the activity options as a bundle
+    ActivityCompat.startActivity(getActivity(), intent, activityOptions.toBundle());
+    // END_INCLUDE(start_activity)
   }
 }
