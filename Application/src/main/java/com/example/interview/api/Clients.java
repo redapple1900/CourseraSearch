@@ -5,10 +5,6 @@ import static com.example.interview.constant.Constant.sBaseUrl;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * Created by chenyuanwei on 16/10/28.
- */
-
 public class Clients {
 
   private static Retrofit sRetrofit;
