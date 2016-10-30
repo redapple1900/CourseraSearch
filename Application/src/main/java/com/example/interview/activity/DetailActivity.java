@@ -31,7 +31,8 @@ public class DetailActivity extends FragmentActivity {
       fragment.setArguments(getIntent().getExtras());
 
       getSupportFragmentManager().beginTransaction()
-          .replace(R.id.fragment_container, fragment).commit();
+          .replace(R.id.fragment_container, fragment)
+          .commit();
     }
   }
 }
